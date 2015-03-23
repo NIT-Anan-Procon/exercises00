@@ -1,4 +1,4 @@
-#問題00-01
+#問題00-01 Basic Operations of Matrix
 行列A,B,C,Dを以下とする。
 
 A =
