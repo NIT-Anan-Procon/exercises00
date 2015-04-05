@@ -5,14 +5,67 @@ class Prob06{
     static void initialize(){
 	int[][] a = {
 	    {1, 1, 1},
-	    {1, 0, 0},
+	    {0, 0, 0}
+	};
+	int[][] b = {
+	    {1, 1, 1},
+	    {1, 1, 1}
+	};
+	int[][][] p = {a, b};
+	/*
+	int[][] a = {
+	    {1, 1, 1},
+	    {1, 1, 0},
 	    {1, 0, 0}
 	};
 	int[][] b = {
-	    {1, 1},
-	    {1, 1}
+	    {0, 1, 0, 0},
+	    {1, 1, 1, 1},
+	    {0, 1, 0, 0}
 	};
-	int[][][] p = {a, b};
+	int[][] c = {
+	    {1, 1, 0, 1},
+	    {0, 1, 1, 1}
+	};
+	int[][] d = {
+	    {1, 0, 0, 0, 0},
+	    {1, 1, 1, 1, 1}
+	};
+	int[][] e = {
+	    {1, 1, 1, 1, 0},
+	    {0, 0, 0, 1, 1}
+	};
+	int[][] f = {
+	    {1, 1, 1},
+	    {0, 0, 1},
+	    {0, 1, 1}
+	};
+	int[][] g = {
+	    {0, 0, 1},
+	    {0, 0, 1},
+	    {1, 1, 1},
+	    {0, 1, 0},
+	};
+	int[][] h = {
+	    {1, 1, 0},
+	    {0, 1, 1},
+	    {1, 1, 0}
+	};
+	int[][] aa = {
+	    {1, 1},
+	    {0, 1},
+	    {1, 1},
+	    {0, 1}
+	};
+	int[][] bb = {
+	    {1, 1, 1, 0},
+	    {0, 1, 1, 1}
+	};
+	int[][] cc = {
+	    {0, 1, 0, 0, 0},
+	    {1, 1, 1, 1, 1}
+	};
+	int[][][] p = {a, b, c, d, e, f, g, h, aa, bb, cc}; */
 	pieces = p;
 
 	count = 0;
@@ -21,35 +74,55 @@ class Prob06{
 		for(int i = 0; i < pieces[k][j].length; i++){
 		    if(pieces[k][j][i] != 0){
 			count++;
-			pieces[k][j][i] = k+1;
+			pieces[k][j][i] = (k+1);
 		    }
 		}
 	    }
 	}
     }
     
-    static void set(int[][] b, int x, int y, boolean[] u){
-	if(allTrue(u)){
-	    print(b);
-	}else if(b[y][x] != 0){
-	    set(b, (x+1)%b[0].length, y+(x+1)/b[0].length, u);	    
-	}else{
-	    int[][] board = new int[b.length][];
-	    for(int i = 0; i < b.length; i++){
-		board[i] = b[i].clone();
+    static void set(int[][] board, int x, int y, boolean[] u){
+       	if(board[y][x] != 0){
+	    if((x+1)*(y+1) == count){
+		print(board);
+	    }else{
+		System.out.println(board[y][x]);
+		System.out.printf("x=%d, y=%d", x, y);
+		System.out.println();
+		set(board, (x+1)%board[0].length, y+(x+1)/board[0].length, u);
 	    }
+       	}else{
 	    boolean[] used = u.clone();
+
+	    print(board);
 	    
 	    for(int i = 0; i < pieces.length; i++){
-		if(!u[i] && judge(board, pieces[i], x, y)){
-		    used[i] = true;
-		    bury(board, pieces[i], x, y);
-		    set(board, (x+1)%b[0].length, y+(x+1)/b[0].length, used);
-		    used[i] = false;
-		    return_bury(board, pieces[i], x, y);
+		if(!used[i]){
+		    for(int j = 0; j < 4; j++){
+			if(judge(board, pieces[i], x, y)){
+			    used[i] = true;
+			    bury(board, pieces[i], x, y);
+			    set(board, (x+1)%board[0].length, y+(x+1)/board[0].length, used);
+			    used[i] = false;
+			    return_bury(board, pieces[i], x, y);
+			}
+			pieces[i] = turn90(pieces[i]);
+		    }
 		}
 	    }
 	}
+    }
+
+    static int[][] turn90(int[][] p){
+	int range_x = p.length;
+	int range_y = p[0].length;
+	int[][] piece = new int[range_y][range_x];
+	for(int j = 0; j < range_y; j++){
+	    for(int i = 0; i < range_x; i++){
+		piece[j][i] = p[range_x-i-1][j];
+	    }
+	}
+	return piece;
     }
 
     static void bury(int[][] b, int[][] p, int x, int y){
@@ -73,6 +146,7 @@ class Prob06{
     
     static boolean judge(int[][] board, int[][] piece, int x, int y){
 	try{
+	    if(board[y][x] == 0 && piece[0][0] == 0) return false;
 	    for(int j = 0; j < piece.length; j++){
 		for(int i = 0; i < piece[j].length; i++){
 		    if(board[j+y][i+x] != 0 && piece[j][x] != 0)
@@ -93,6 +167,7 @@ class Prob06{
 	    }
 	    System.out.println();
 	}
+	System.out.println("~~~~~~~~~~~~~~");
     }
 
     static boolean allTrue(boolean[] b){
@@ -106,6 +181,6 @@ class Prob06{
 
     public static void main(String[] args){
 	initialize();
-	set(new int[3][3], 0, 0, new boolean[2]);
+	set(new int[3][3], 0, 0, new boolean[pieces.length]);
     }
 }
