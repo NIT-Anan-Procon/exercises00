@@ -4,16 +4,22 @@ class Prob06{
     
     static void initialize(){
 	int[][] a = {
-	    {1, 1, 1},
-	    {0, 0, 0}
+	    {1, 1},
+	    {1, 0},
+	    {1, 1}
 	};
 	int[][] b = {
-	    {1, 1, 1},
+	    {1, 0, 0},
+	    {1, 0, 1},
 	    {1, 1, 1}
 	};
-	int[][][] p = {a, b};
-	/*
-	int[][] a = {
+	int[][] c = {
+	    {0, 0, 0, 1},
+	    {1, 1, 1, 1}
+	};
+	    
+	int[][][] p = {a, b, c};
+	/*	int[][] a = {
 	    {1, 1, 1},
 	    {1, 1, 0},
 	    {1, 0, 0}
@@ -65,7 +71,7 @@ class Prob06{
 	    {0, 1, 0, 0, 0},
 	    {1, 1, 1, 1, 1}
 	};
-	int[][][] p = {a, b, c, d, e, f, g, h, aa, bb, cc}; */
+	int[][][] p = {a, b, c, d, e, f, g, h, aa, bb, cc};*/
 	pieces = p;
 
 	count = 0;
@@ -82,19 +88,21 @@ class Prob06{
     }
     
     static void set(int[][] board, int x, int y, boolean[] u){
-       	if(board[y][x] != 0){
-	    if((x+1)*(y+1) == count){
+	//	if(board[y][x] != 0){
+	if((x+1)*(y+1) == count){
+	    if(allBury(board)){
+		System.out.println("結果~~~~~~~~~~");
 		print(board);
-	    }else{
+		System.exit(0);
+	    }
+	    /*  }else{
 		System.out.println(board[y][x]);
 		System.out.printf("x=%d, y=%d", x, y);
 		System.out.println();
 		set(board, (x+1)%board[0].length, y+(x+1)/board[0].length, u);
-	    }
+		} */
        	}else{
 	    boolean[] used = u.clone();
-
-	    print(board);
 	    
 	    for(int i = 0; i < pieces.length; i++){
 		if(!used[i]){
@@ -110,6 +118,7 @@ class Prob06{
 		    }
 		}
 	    }
+	    set(board, (x+1)%board[0].length, y+(x+1)/board[0].length, u);
 	}
     }
 
@@ -136,11 +145,19 @@ class Prob06{
     static void return_bury(int[][] b, int[][] p, int x, int y){
 	for(int j = 0; j < p.length; j++){
 	    for(int i = 0; i < p[j].length; i++){
-		if(p[j][i] != 0){
-		    b[y+j][x+i] = 0;
-		}
+		b[y+j][x+i] -= p[j][i];
 	    }
 	}
+    }
+
+    static boolean allBury(int[][] b){
+	int multi = 1;
+	for(int j = 0; j < b.length; j++){
+	    for(int i = 0; i < b[j].length; i++){
+		multi *= b[j][i];
+	    }
+	}
+	return (multi!=0);
     }
 	
     
@@ -157,6 +174,13 @@ class Prob06{
 	    return false;
 	}
 	return true;
+    }
+
+    static void print(int[][][] pieces){
+	System.out.println("ピース~~~~~~~~");
+	for(int i = 0; i < pieces.length; i++){
+	    print(pieces[i]);
+	}
     }
 
 
@@ -181,6 +205,7 @@ class Prob06{
 
     public static void main(String[] args){
 	initialize();
-	set(new int[3][3], 0, 0, new boolean[pieces.length]);
+	print(pieces);
+	set(new int[4][4], 0, 0, new boolean[pieces.length]);
     }
 }
